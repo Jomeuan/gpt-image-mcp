@@ -90,7 +90,7 @@ async function saveImageFromURL(logsDir: string, resultUrl: string) {
     const outputs = j?.data?.outputs ?? j?.outputs ?? [];
     //  outputs[0] 直接是图片URL字符串
     const b64: string | undefined = outputs?.[0];
-    console.log("base 64 preview ", b64?.slice(0, 30) + "...");
+    console.log(`Status: ${j?.data?.status} , base 64 preview: ${b64?.slice(0, 30)}...`);
 
     if (b64 && typeof b64 === "string") {
       const buf = Buffer.from(b64, "base64");
@@ -179,18 +179,18 @@ async function generateImage() {
     }
 
     // result 返回 JSON（包含状态/图片URL/base64 等）
-    const jsonText = await r.json().catch(() => "");
-    const status: string | undefined = jsonText?.data?.status ;
+    const imgJson = await r.json().catch(() => "");
+    const status: string | undefined = imgJson?.data?.status ;
 
     if (status === "created" || status === "queued" || status === "processing" || status === "running") {
-      console.log(`Status: ${status} , jsonText: ${jsonText}, polling again in 1s...`);
-      await sleep(1000);
+      console.log(`Status: ${status} , jsonText: ${JSON.stringify(imgJson)}, polling again in 1s...`);
+      await sleep(10000);
       continue;
     } else if (status === "succeeded" || status === "success" || status === "completed") {
-      saveText(logsDir, `poll-${String(i).padStart(2, "0")}-response.txt`, jsonText);
+      saveText(logsDir, `poll-${String(i).padStart(2, "0")}-response.txt`, JSON.stringify(imgJson));
 
       //  outputs[0] 直接是图片URL字符串
-      const b64: string | undefined = jsonText?.data?.outputs?.[0];
+      const b64: string | undefined = imgJson?.data?.outputs?.[0];
       console.log("base 64 preview ", b64?.slice(0, 30) + "...");
       if (b64 && typeof b64 === "string") {
         const buf = Buffer.from(b64, "base64");
@@ -202,7 +202,7 @@ async function generateImage() {
       throw new Error(`Succeeded but no image payload`);
 
     } else if (status === "failed" || status === "error") {
-      saveText(logsDir, `poll-${String(i).padStart(2, "0")}-response.txt`, jsonText);
+      saveText(logsDir, `poll-${String(i).padStart(2, "0")}-response.txt`, JSON.stringify(imgJson));
       throw new Error(`Generation failed`);
     }
   }
