@@ -1,8 +1,25 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 
-const API_KEY = process.env.GPTS_API_KEY || "sk-SFu8bd893624779169988c1be556662258f6f67c5a1xaREe";
+type AppConfig = {
+  apiKey?: string;
+  prompt: string;
+};
+
+function loadConfig(): AppConfig {
+  const p = path.resolve(process.cwd(), "gpts.config.json");
+  const raw = fs.readFileSync(p, "utf8");
+  const cfg = JSON.parse(raw) as AppConfig;
+  if (!cfg?.prompt) throw new Error(`Missing "prompt" in ${p}`);
+  if (!cfg?.apiKey) throw new Error(`Missing API key (set GPTS_API_KEY or put "apiKey" in gpts.config.json)`);
+  return cfg;
+}
+const cfg = loadConfig();
+
+const API_KEY =  cfg.apiKey;
+
 const ENDPOINT = "https://api.gptsapi.net/api/v3/openai/gpt-image-2-plus/text-to-image";
+
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -113,8 +130,7 @@ async function generateImage() {
   const createReqBody = {
     quality: 'low',
     //prompt: "生成一张哥特女青年的自拍照",
-    prompt: `
-`,
+    prompt: cfg.prompt,
     aspect_ratio: "16:9",
     output_format: "png",
   };
