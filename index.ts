@@ -128,10 +128,10 @@ async function generateImage() {
   const logsDir = path.resolve(process.cwd(), "http-logs", runId);
 
   const createReqBody = {
-    quality: 'low',
+    quality: 'high',
     //prompt: "生成一张哥特女青年的自拍照",
     prompt: cfg.prompt,
-    aspect_ratio: "16:9",
+    aspect_ratio: "9:16",
     output_format: "png",
   };
 
