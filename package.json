@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "text": "tsx src/index.ts",
+    "text": "tsx src/index.ts --mode=text2image",
+    "image": "tsx src/index.ts --mode=image2image",
     "build": "tsc"
   },
   "devDependencies": {
