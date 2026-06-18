@@ -69,7 +69,9 @@ export async function text2Image() {
             downloadImageFromImgUrl(imgUrl!, runId);
             return;
         } else if (status === "failed") {
-            throw new Error("Generation failed");
+            console.log(`poll: ${i}, status: ${status}\n jsonText: ${JSON.stringify(resultJson)}`);
+            console.error(`error message:${resultJson?.error}`)
+            throw new Error("Generation failed ");
         }
     }
     // 超时
