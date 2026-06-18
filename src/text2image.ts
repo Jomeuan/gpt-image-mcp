@@ -20,10 +20,10 @@ export async function text2Image() {
 
     // 1.1 构造请求体
     const taskReqBody = {
-        resolution: "1K",
+        // resolution: "1K",
         prompt: cfg.textPrompt,
-        aspect_ratio: "9:16",
-        output_format: "png",
+        // aspect_ratio: "9:16",
+        // output_format: "png",
     };
 
     logger.info({ taskReqBody: taskReqBody }, "create task request");

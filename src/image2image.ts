@@ -5,6 +5,7 @@ import pino from "pino";
 import { pipeline } from "node:stream/promises";
 import { createWriteStream } from "node:fs";
 import { getLogDir, getLogger } from "./util";
+import { fileURLToPath } from "node:url";
 
 const ENDPOINT =
     "https://api.gptsapi.net/api/v3/openai/gpt-image-2/image-edit";
@@ -12,17 +13,28 @@ const ENDPOINT =
 function sleep(ms: number) {
     return new Promise((r) => setTimeout(r, ms));
 }
-
 export async function image2Image() {
     const runId = `${Date.now()}`;
     const logger = getLogger(runId);
 
+    // 1) data: 协议，直接把 base64 解码保存到本地
+    const inputUrls = await Promise.all(cfg.imageInputUrls.map(async inputUrl => {
+        if (!inputUrl.startsWith("http")) {
+            const buf = await fs.promises.readFile(inputUrl);
+            const mime = "image/png";
+            return `data:${mime};base64,${buf.toString("base64")}`;
+        }else{
+            return inputUrl;
+        }
+
+    }));
+
     // 1) 构造请求体
     const taskReqBody = {
         prompt: cfg.imagePrompt!,
-        input_urls: cfg.imageInputUrls!,
-       // resolution: "1K",
-       // output_format: "png",
+        input_urls: inputUrls!,
+        // resolution: "1K",
+        // output_format: "png",
     };
 
     logger.info({ runId, taskReqBody }, "start image2image");
