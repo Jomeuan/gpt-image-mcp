@@ -1,4 +1,5 @@
 http-logs/
+http-logs-history/
 node_modules/
 gpts.config.json
 images/

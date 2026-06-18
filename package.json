@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "tsx src/index.ts",
+    "text": "tsx src/index.ts",
     "build": "tsc"
   },
   "devDependencies": {

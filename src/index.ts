@@ -1,5 +1,4 @@
-import { reuseRunId } from "./run-reuse";
-import { text2image } from "./text2image";
+import { text2Image, rerunText2Image } from "./text2image";
 
 async function main() {
   const args: { runId?: string } = {};
@@ -9,11 +8,11 @@ async function main() {
   }
 
   if (args.runId) {
-    await reuseRunId(args.runId);
+    await rerunText2Image(args.runId);
     return;
+  } else {
+    await text2Image();
   }
-
-  await text2image();
 }
 
 main().catch((e) => {
